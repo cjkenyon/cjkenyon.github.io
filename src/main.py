@@ -1,6 +1,7 @@
 import shutil
 from pathlib import Path
-from datetime import datetime
+from xml.etree.ElementTree import Element, SubElement, ElementTree, indent
+from datetime import datetime, timezone
 
 from jinja2 import Environment, FileSystemLoader
 from markdown import markdown
@@ -71,10 +72,18 @@ def main():
             with open(output_dir.joinpath(url), "w") as f_out:
                 f_out.write(post_html)
 
-        posts.append({"url": url, "title": title, "date": date_str})
+        posts.append(
+            {
+                "url": url,
+                "title": title,
+                "date_str": date_str,
+                "date_obj": date,
+                "content": content,
+            }
+        )
 
     # order posts by date
-    posts.sort(key=lambda p: p["date"], reverse=True)
+    posts.sort(key=lambda p: p["date_str"], reverse=True)
 
     index_html = index_template.render(
         site_title="cjkenyon", site_desc="Programmer and Musician", posts=posts
@@ -82,6 +91,58 @@ def main():
 
     with open(output_dir.joinpath("index.html"), "w") as f:
         f.write(index_html)
+
+    print("Building feed.xml.")
+
+    ET = Element("feed", xmlns="http://www.w3.org/2005/Atom")
+    SubElement(
+        ET,
+        "link",
+        href="https://cjkenyon.github.io/feed.xml",
+        rel="self",
+        type="application/atom+xml",
+    )
+    SubElement(
+        ET, "link", href="https://cjkenyon.github.io", rel="alternate", type="text/html"
+    )
+    SubElement(ET, "updated").text = datetime.now(timezone.utc).strftime(
+        "%Y-%m-%dT%H:%M:%SZ"
+    )
+    SubElement(ET, "id").text = "https://cjkenyon.github.io/feed.xml"
+    SubElement(ET, "title", type="html").text = "Cade Kenyon"
+
+    author = SubElement(ET, "author")
+    SubElement(author, "name").text = "Cade Kenyon"
+
+    for post in posts:
+        entry = SubElement(ET, "entry")
+        SubElement(entry, "title", type="text").text = post["title"]
+        SubElement(
+            entry,
+            "link",
+            href=f"https://cjkenyon.github.io/{post['url']}",
+            rel="alternate",
+            type="text/html",
+            title=post["title"],
+        )
+        SubElement(entry, "published").text = post["date_obj"].strftime(
+            "%Y-%m-%dT00:00:00+00:00"
+        )
+        SubElement(entry, "updated").text = post["date_obj"].strftime(
+            "%Y-%m-%dT00:00:00+00:00"
+        )
+        SubElement(entry, "id").text = f"https://cjkenyon.github.io/{post['url']}"
+
+        entry_author = SubElement(entry, "author")
+        SubElement(entry_author, "name").text = "Cade Kenyon"
+
+        SubElement(entry, "content", type="html").text = post["content"]
+
+    tree = ElementTree(ET)
+    indent(tree, space="  ")
+    tree.write(
+        output_dir.joinpath("feed.xml"), encoding="unicode", xml_declaration=True
+    )
 
     print("Done.")
 
