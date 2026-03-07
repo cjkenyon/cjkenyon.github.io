@@ -1,0 +1,121 @@
+:root {
+  --bg: #FFFFFF;
+  --color: #000000;
+  --accent: #B30A01;
+}
+
+@font-face {
+    font-family: "EB Garamond";
+    src: url('/static/fonts/EBGaramond-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "EB Garamond";
+    src: url('/static/fonts/EBGaramond-Italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+}
+
+html {
+    font-family: "EB Garamond", sans-serif;
+    /* https://matklad.github.io/2025/07/16/font-size-adjust.html */
+    font-size-adjust: ex-height 0.53;
+    -webkit-text-size-adjust: 100%;
+    --line-height: 1.7rem;
+    line-height: var(--line-height);
+    margin-bottom: var(--line-height);
+    background-color: var(--bg);
+}
+
+header {
+    margin-bottom: 2rem;
+}
+
+body {
+    max-width: 80ch;
+    margin: 0 auto;
+    padding: 2ch;
+    background-color: var(--bg);
+    color: var(--color);
+}
+
+nav {
+  display: flex;
+  align-items: baseline;
+  gap: 1ch
+}
+
+.site-title {
+  margin-right: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2{
+    font-weight: 400;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+}
+
+h3 {
+    margin-bottom: 0.5rem;
+}
+
+hr {
+  border: none;
+  text-align: center;
+}
+
+hr::after {
+  content: ". . .";
+  color: var(--accent);
+}
+
+p a {
+  font-style: italic;
+  text-decoration: underline;
+}
+
+img {
+  float: left;
+  width: 150px;
+  margin: 0 1ch 1ch 0;
+}
+
+.post-content {
+  display: flow-root;
+}
+
+.post-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.post-list li {
+  margin-bottom: 1rem;
+}
+
+.post-list h2 time{
+    margin-bottom: 0;
+}
+
+code {
+    font-family: "Google Sans Code", monospace; font-variant-ligatures: none;
+    color: rgba(0, 0, 0, .9);
+}
+
+footer {
+  margin-top: 2ch;
+  display: flex;
+  justify-content: space-between;
+}

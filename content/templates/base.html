@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
+  <title>{% block title %}{{ site_title }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}{{ site_desc }}{% endblock %}" />
+  <link rel="stylesheet" href="/static/main.css" />
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a class="site-title" href="/">{{ site_title }}</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <a href="mailto:cjkenyon01@gmail.com">Email</a>
+    <a href="https://github.com/cjkenyon">GitHub</a>
+  </footer>
+
+</body>
+</html>

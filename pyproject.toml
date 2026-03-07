@@ -1,0 +1,21 @@
+[project]
+name = "cjkenyon-github-io"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "jinja2>=3.1.6",
+    "markdown>=3.10.2",
+]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.1",
+    "ruff-lsp>=0.0.62",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pre-commit>=4.5.1",
+]
