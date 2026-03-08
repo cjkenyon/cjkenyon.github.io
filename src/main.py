@@ -1,7 +1,8 @@
 import shutil
 from pathlib import Path
-from xml.etree.ElementTree import Element, SubElement, ElementTree, indent
+from xml.etree.ElementTree import Element, SubElement, ElementTree, indent, fromstring
 from datetime import datetime, timezone
+import requests
 
 from jinja2 import Environment, FileSystemLoader
 from markdown import markdown
@@ -28,6 +29,7 @@ def main():
     page_template = env.get_template("page.html")
     post_template = env.get_template("post.html")
     index_template = env.get_template("index.html")
+    feed_template = env.get_template("feed.html")
 
     # copy over css files
     shutil.copytree(css_dir, static_dir, dirs_exist_ok=True)
@@ -143,6 +145,64 @@ def main():
     tree.write(
         output_dir.joinpath("feed.xml"), encoding="unicode", xml_declaration=True
     )
+
+    print("Building feed.html.")
+
+    # fetch all the xml files from
+    feeds = []
+    with open(content_dir.joinpath("feed.txt"), "r") as f:
+        feeds = [url.strip() for url in f.readlines()]
+
+    ATOM = "{http://www.w3.org/2005/Atom}"
+
+    entries = []
+    for feed_url in feeds:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        }
+        response = requests.get(feed_url, headers=headers, timeout=10)
+        response.raise_for_status()
+        root = fromstring(response.text)
+
+        for entry in root.findall(f"{ATOM}entry"):
+            title = entry.findtext(f"{ATOM}title")
+            if not title:
+                continue
+
+            link = entry.find(f"{ATOM}link").get("href")
+            if not link:
+                continue
+
+            date_str = entry.findtext(f"{ATOM}published")
+            if date_str is None:
+                date_str = entry.findtext(f"{ATOM}updated")
+            if not date_str:
+                continue
+            date = datetime.fromisoformat(date_str)
+
+            author = (
+                entry.findtext(f"{ATOM}author/{ATOM}name")
+                or root.findtext(f"{ATOM}author/{ATOM}name")
+                or root.findtext(f"{ATOM}title")
+            )
+            next = {
+                "title": title,
+                "url": link,
+                "date": date,
+                "author": author,
+            }
+            entries.append(next)
+
+    entries.sort(key=lambda e: e["date"], reverse=True)
+
+    # format date for display after sorting
+    for entry in entries:
+        entry["date_str"] = entry["date"].strftime("%b %d, %Y")
+
+    html = feed_template.render(site_title="cjkenyon", entries=entries)
+
+    with open(output_dir.joinpath("feed.html"), "w") as f:
+        f.write(html)
 
     print("Done.")
 
