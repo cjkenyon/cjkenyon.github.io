@@ -2,6 +2,7 @@ import shutil
 from pathlib import Path
 from xml.etree.ElementTree import Element, SubElement, ElementTree, indent, fromstring
 from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 import requests
 
 from jinja2 import Environment, FileSystemLoader
@@ -149,7 +150,6 @@ def main():
     print("Building feed.html.")
 
     # fetch all the xml files from
-    feeds = []
     with open(content_dir.joinpath("feed.txt"), "r") as f:
         feeds = [url.strip() for url in f.readlines()]
 
@@ -164,34 +164,62 @@ def main():
         response.raise_for_status()
         root = fromstring(response.text)
 
-        for entry in root.findall(f"{ATOM}entry"):
-            title = entry.findtext(f"{ATOM}title")
-            if not title:
-                continue
+        if root.tag == "rss":
+            channel = root.find("channel")
+            feed_author = channel.findtext("title") if channel is not None else None
+            items = channel.findall("item") if channel is not None else []
+            for item in items:
+                title = item.findtext("title")
+                link = item.findtext("link")
+                date_str = item.findtext("pubDate")
+                if not (title and link and date_str):
+                    continue
+                try:
+                    date = parsedate_to_datetime(date_str)
+                except (TypeError, ValueError):
+                    continue
+                entries.append(
+                    {
+                        "title": title,
+                        "url": link,
+                        "date": date,
+                        "author": feed_author,
+                    }
+                )
+        else:
+            for entry in root.findall(f"{ATOM}entry"):
+                title = entry.findtext(f"{ATOM}title")
+                if not title:
+                    continue
 
-            link = entry.find(f"{ATOM}link").get("href")
-            if not link:
-                continue
+                link = entry.find(f"{ATOM}link").get("href")
+                if not link:
+                    continue
 
-            date_str = entry.findtext(f"{ATOM}published")
-            if date_str is None:
-                date_str = entry.findtext(f"{ATOM}updated")
-            if not date_str:
-                continue
-            date = datetime.fromisoformat(date_str)
+                date_str = entry.findtext(f"{ATOM}published")
+                if date_str is None:
+                    date_str = entry.findtext(f"{ATOM}updated")
+                if not date_str:
+                    continue
+                date = datetime.fromisoformat(date_str)
 
-            author = (
-                entry.findtext(f"{ATOM}author/{ATOM}name")
-                or root.findtext(f"{ATOM}author/{ATOM}name")
-                or root.findtext(f"{ATOM}title")
-            )
-            next = {
-                "title": title,
-                "url": link,
-                "date": date,
-                "author": author,
-            }
-            entries.append(next)
+                author = (
+                    entry.findtext(f"{ATOM}author/{ATOM}name")
+                    or root.findtext(f"{ATOM}author/{ATOM}name")
+                    or root.findtext(f"{ATOM}title")
+                )
+                next = {
+                    "title": title,
+                    "url": link,
+                    "date": date,
+                    "author": author,
+                }
+                entries.append(next)
+
+    # normalize all dates to timezone-aware UTC for safe sorting
+    for entry in entries:
+        if entry["date"].tzinfo is None:
+            entry["date"] = entry["date"].replace(tzinfo=timezone.utc)
 
     entries.sort(key=lambda e: e["date"], reverse=True)
 
