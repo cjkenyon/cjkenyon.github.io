@@ -1,3 +1,4 @@
 https://matklad.github.io/feed.xml
 https://mmapped.blog/feed.xml
 https://jvns.ca/atom.xml
+https://mariozechner.at/rss.xml
