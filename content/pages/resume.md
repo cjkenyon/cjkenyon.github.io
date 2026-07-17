@@ -1,7 +1,6 @@
 ## Contacts
 Cade Kenyon<br>
 cjkenyon01@gmail.com<br>
-(262)-955-0607<br>
 <https://github.com/cjkenyon>
 
 ## Education
