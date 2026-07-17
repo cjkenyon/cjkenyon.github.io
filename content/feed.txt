@@ -3,3 +3,4 @@ https://mmapped.blog/feed.xml
 https://jvns.ca/atom.xml
 https://mariozechner.at/rss.xml
 https://www.teamten.com/lawrence/writings/rss.xml
+https://ziglang.org/devlog/index.xml
