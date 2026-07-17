@@ -4,3 +4,4 @@ https://jvns.ca/atom.xml
 https://mariozechner.at/rss.xml
 https://www.teamten.com/lawrence/writings/rss.xml
 https://ziglang.org/devlog/index.xml
+https://www.scattered-thoughts.net/atom.xml
