@@ -13,8 +13,8 @@ Programming Languages & Compilers, Artificial Intelligence
 
 ## Technical Skills
 
-Programming Languages: Python, C, Verilog, Rust<br>
-Tools: Kubernetes, Docker, Gitlab, MySQL
+Programming Languages: Python, Zig, C, Verilog<br>
+Tools: Git, Kubernetes, Docker, Gitlab, SQL Databases, Elasticsearch
 
 ## Professional Experience
 
@@ -22,10 +22,12 @@ Tools: Kubernetes, Docker, Gitlab, MySQL
 
 <https://www.xes-inc.com/>
 
-`May 2023 - Present, Devops Engineer`
+`May 2023 - Present, Software Engineer`
 
-- Developed a job scheduling system for arbritrating testing hardware across software teams.
-- Automated software team workflows via CI/CD pipelines.
+- Designed, implemented, and maintained a log server for posting and analyzing engineering test results.
+- Designed, implemented, and maintained a job scheduling system for arbitrating testing
+  hardware across all of our software teams allowing them to configure automated nightly/release testing pipelines.
+- Automated software team workflows via CI/CD pipelines during time critical releases.
 - Maintained applications running on a Kubernetes cluster.
 
 `May 2022 - May 2023, Manufacturing Test Engineer`
