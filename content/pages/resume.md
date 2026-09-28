@@ -29,6 +29,7 @@ Tools: Git, Kubernetes, Docker, Gitlab, SQL Databases, Elasticsearch
   hardware across all of our software teams allowing them to configure automated nightly/release testing pipelines.
 - Automated software team workflows via CI/CD pipelines during time critical releases.
 - Maintained applications running on a Kubernetes cluster.
+- Founded and facilitate a cross-team test infrastructure working group, bringing together 4 engineering teams to identify test infrastructure issues and drive improvements.
 
 `May 2022 - May 2023, Manufacturing Test Engineer`
 
